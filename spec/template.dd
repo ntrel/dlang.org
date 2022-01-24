@@ -164,11 +164,14 @@ $(GNAME TemplateSingleArgument):
 
     $(P Even if template arguments are implicitly converted to the same
         template parameter type, they still refer to the same instance.
-        This example uses a
-        $(RELATIVE_LINK2 aggregate_templates, `struct` template):)
+        This example uses a $(GLINK TemplateValueParameter):)
 
+        $(SPEC_RUNNABLE_EXAMPLE_COMPILE
         -----
-        struct TFoo(int x) { }
+        template TFoo(int x)
+        {
+            struct TFoo {}
+        }
 
         // Different template parameters create different struct types
         static assert(!is(TFoo!(3) == TFoo!(2)));
@@ -179,6 +182,9 @@ $(GNAME TemplateSingleArgument):
         // and refers to exactly the same instance as TFoo!(3)
         static assert(is(TFoo!(3) == TFoo!(3u)));
         -----
+        )
+
+    $(P See also: $(RELATIVE_LINK2 aggregate_templates, `struct` templates).)
 
     $(H3 $(LNAME2 copy_example, Practical Example))
 
@@ -807,7 +813,7 @@ $(GNAME TemplateSequenceParameter):
 
         template print(args...)
         {
-            void f()
+            void print()
             {
                 writeln("args are ", args); // args is a ValueSeq
             }
@@ -815,7 +821,7 @@ $(GNAME TemplateSequenceParameter):
 
         template write(Args...) // Args is a TypeSeq
         {
-            void f(Args args) // args is a ValueSeq
+            void write(Args args) // args is a ValueSeq
             {
                 writeln("args are ", args);
             }
@@ -823,8 +829,8 @@ $(GNAME TemplateSequenceParameter):
 
         void main()
         {
-            print!(1,'a',6.8).f();                    // prints: args are 1a6.8
-            write!(int, char, double).f(1, 'a', 6.8); // prints: args are 1a6.8
+            print!(1,'a',6.8)();                    // prints: args are 1a6.8
+            write!(int, char, double)(1, 'a', 6.8); // prints: args are 1a6.8
         }
         ---
         )
