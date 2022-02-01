@@ -967,6 +967,9 @@ $(H2 $(LNAME2 implicit_template_properties, Eponymous Templates))
         }
         ------
 
+        $(P Members of an eponymous template are hidden and cannot be
+        accessed from outside the template.)
+
         $(P The following example has more than one eponymous member and uses
         $(RELATIVE_LINK2 ifti, Implicit Function Template Instantiation):)
 
