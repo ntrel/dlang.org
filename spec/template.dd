@@ -186,28 +186,37 @@ $(GNAME TemplateSingleArgument):
 
     $(P See also: $(RELATIVE_LINK2 aggregate_templates, `struct` templates).)
 
-    $(H3 $(LNAME2 copy_example, Practical Example))
+    $(LEGACY_LNAME2 copy_example)
+    $(H3 $(LNAME2 example, Practical Example))
 
-    $(P A simple generic copy template would be:)
+    $(P An $(RELATIVE_LINK2 implicit_template_properties, eponymous) function template to find a value in an array:)
 
+        $(SPEC_RUNNABLE_EXAMPLE_RUN
         ------
-        template TCopy(T)
+        template find(T)
         {
-            void copy(out T to, T from)
+            bool find(T[] haystack, T needle)
             {
-                to = from;
+                foreach (e; haystack)
+                {
+                    if (e == needle)
+                        return true;
+                }
+                return false;
             }
         }
-        ------
 
-    $(P To use this template, it must first be instantiated with a specific
-        type:)
+        void main()
+        {
+            int[] arr = [1,4,9];
+            assert(find!int(arr, 4));
+            assert(!find!int(arr, 5));
+        }
+        ------
+        )
 
-        ------
-        int i;
-        TCopy!(int).copy(i, 3);
-        ------
-    $(P See also $(RELATIVE_LINK2 function-templates, function templates).)
+    $(P See also: $(RELATIVE_LINK2 function-templates, Function templates),
+        $(REF find, std,algorithm,searching).)
 
 $(H2 $(LNAME2 instantiation_scope, Instantiation Scope))
 
