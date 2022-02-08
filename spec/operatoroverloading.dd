@@ -308,7 +308,7 @@ T opBinary(string op)(T rhs)
 ---
 T opBinary(string op)(T rhs)
 {
-    return mixin("data "~op~" rhs.data");
+    return mixin("data ", op, " rhs.data");
 }
 ---
 
