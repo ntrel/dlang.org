@@ -337,19 +337,21 @@ $(H2 $(LEGACY_LNAME2 StructLiteral, struct-literal, Struct Literals))
         )
 
         $(P Struct literals are syntactically like function calls.
-        If a struct has a member function named $(CODE opCall), then
-        struct literals for that struct are not possible. See also
-        $(DDSUBLINK spec/operatoroverloading, FunctionCall, opCall operator overloading)
-        for the issue workaround.
         It is an error if there are more arguments than fields of
         the struct.
         If there are fewer arguments than fields, the remaining
         fields are initialized with their respective default
-        initializers.
+        initializers.)
+        $(P
         If there are anonymous unions in the struct, only the first
         member of the anonymous union can be initialized with a
         struct literal, and all subsequent non-overlapping fields are default
         initialized.
+        )$(P
+        If a struct has a member function named $(CODE opCall), then
+        struct literals for that struct are not possible. See also
+        $(DDSUBLINK spec/operatoroverloading, FunctionCall, `opCall` operator overloading)
+        for the issue workaround.
         )
 
 $(H2 $(LNAME2 struct_properties, Struct Properties))
@@ -411,14 +413,13 @@ $(H2 $(LEGACY_LNAME2 Struct-Constructor, struct-constructor, Struct Constructors
         $(LINK2 #struct-literal, struct literal).
         )
 
-        $(P Constructors are defined with a function name of `this` and have no return value.
-        The grammar is the same as for the class $(GLINK2 class, Constructor).
+        $(P Constructors are defined with a function name `this` and have no return value.
+        The grammar is the same as for a class $(GLINK2 class, Constructor).
         )
 
         $(P A struct constructor is called by the name of the struct followed by
         $(GLINK2 function, Parameters).
-        )
-        $(P If the $(GLINK2 function, ParameterList) is empty,
+        If the $(GLINK2 function, ParameterList) is empty,
         the struct instance is default initialized.)
 
         $(SPEC_RUNNABLE_EXAMPLE_FAIL
@@ -426,6 +427,7 @@ $(H2 $(LEGACY_LNAME2 Struct-Constructor, struct-constructor, Struct Constructors
         struct S
         {
             int x, y = 4, z = 6;
+
             this(int a, int b)
             {
                 x = a;
@@ -462,12 +464,13 @@ $(H3 $(LNAME2 delegating-constructor, Delegating Constructors))
         $(I delegating constructor):
         )
 
-        $(SPEC_RUNNABLE_EXAMPLE_FAIL
+        $(SPEC_RUNNABLE_EXAMPLE_RUN
         ---
         struct S
         {
             int j = 1;
             long k = 2;
+
             this(long k)
             {
                 this.k = k;
@@ -475,12 +478,16 @@ $(H3 $(LNAME2 delegating-constructor, Delegating Constructors))
             this(int i)
             {
                 // At this point: j=1, k=2
-                $(CODE_HIGHLIGHT this)(6); // delegating constructor call
+                this(6L); // delegating constructor call
                 // At this point: j=1, k=6
                 j = i;
                 // At this point: j=i, k=6
             }
         }
+
+        S s = S(3);
+        assert(s.j == 3);
+        assert(s.k == 6);
         ---
         )
 
@@ -553,9 +560,9 @@ $(H3 $(LNAME2 struct-instantiation, Struct Instantiation))
         )
 
 
-$(H3 $(LNAME2 constructor-attributes, Constructor Attributes))
+$(H3 $(LNAME2 constructor-attributes, Constructor Qualifiers))
 
-        $(P A constructor qualifier (`const`, `immutable` or `shared`) constructs the object instance
+        $(P A constructor type qualifier (`const`, `immutable` or `shared`) constructs the object instance
         with that specific qualifier.
         )
         $(SPEC_RUNNABLE_EXAMPLE_FAIL
@@ -600,7 +607,7 @@ $(H3 $(LNAME2 constructor-attributes, Constructor Attributes))
         ---
         )
 
-        $(P Constructors can be overloaded with different attributes.)
+        $(P Constructors can be overloaded with different qualifiers.)
         $(SPEC_RUNNABLE_EXAMPLE_COMPILE
         ---
         struct S
@@ -616,10 +623,11 @@ $(H3 $(LNAME2 constructor-attributes, Constructor Attributes))
         ---
         )
 
-$(H4 $(LNAME2 pure-constructors, Pure Constructors))
+$(H3 $(LNAME2 pure-constructors, Pure Constructors))
 
-        $(P If the constructor can create a unique object (i.e. if it is `pure`),
-        the object is implicitly convertible to any qualifiers.
+        $(P If a constructor is $(DDSUBLINK spec/function, pure-functions, `pure`),
+        it creates a unique object. Due to this, a `pure` constructor
+        can be called to construct an object with any qualifiers.
         )
         $(SPEC_RUNNABLE_EXAMPLE_COMPILE
         ---
@@ -893,7 +901,7 @@ $(H3 $(LEGACY_LNAME2 StructCopyConstructor, struct-copy-constructor, Struct Copy
     }
     ---
 
-    $(LI When a parameter is returned by value from a function and Named Returned Value Optiomization (NRVO)
+    $(LI When a parameter is returned by value from a function and Named Returned Value Optimization (NRVO)
     cannot be performed:)
     ---
     struct A
@@ -944,9 +952,9 @@ $(H3 $(LEGACY_LNAME2 StructCopyConstructor, struct-copy-constructor, Struct Copy
     is initialized by copy, an error will be issued. The same rule applies to overlapped fields
     (anonymous unions).)
 
-    $(P A `struct` that defines a copy constructor is not a POD.)
+    $(P A `struct` that defines a copy constructor is not $(RELATIVE_LINK2 POD, POD).)
 
-$(H4 $(LNAME2 copy-constructor-attributes, Copy Constructor Attributes))
+$(H4 $(LNAME2 copy-constructor-attributes, Copy Constructor Qualifiers))
 
     $(P The copy constructor can be overloaded with different qualifiers applied
     to the parameter (copying from a qualified source) or to the copy constructor
