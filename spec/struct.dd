@@ -339,19 +339,21 @@ $(H2 $(LEGACY_LNAME2 StructLiteral, struct-literal, Struct Literals))
         )
 
         $(P Struct literals are syntactically like function calls.
-        If a struct has a member function named $(CODE opCall), then
-        struct literals for that struct are not possible. See also
-        $(DDSUBLINK spec/operatoroverloading, FunctionCall, opCall operator overloading)
-        for the issue workaround.
         It is an error if there are more arguments than fields of
         the struct.
         If there are fewer arguments than fields, the remaining
         fields are initialized with their respective default
-        initializers.
+        initializers.)
+        $(P
         If there are anonymous unions in the struct, only the first
         member of the anonymous union can be initialized with a
         struct literal, and all subsequent non-overlapping fields are default
         initialized.
+        )$(P
+        If a struct has a member function named $(CODE opCall), then
+        struct literals for that struct are not possible. See also
+        $(DDSUBLINK spec/operatoroverloading, FunctionCall, `opCall` operator overloading)
+        for the issue workaround.
         )
 
 $(H2 $(LNAME2 struct_properties, Struct Properties))
@@ -413,14 +415,13 @@ $(H2 $(LEGACY_LNAME2 Struct-Constructor, struct-constructor, Struct Constructors
         $(RELATIVE_LINK2 struct-literal, struct literal).
         )
 
-        $(P Constructors are defined with a function name of `this` and have no return value.
-        The grammar is the same as for the class $(GLINK2 class, Constructor).
+        $(P Constructors are defined with a function name `this` and have no return value.
+        The grammar is the same as for a class $(GLINK2 class, Constructor).
         )
 
         $(P A struct constructor is called by the name of the struct followed by
         $(GLINK2 function, Parameters).
-        )
-        $(P If the $(GLINK2 function, ParameterList) is empty,
+        If the $(GLINK2 function, ParameterList) is empty,
         the struct instance is default initialized.)
 
         $(SPEC_RUNNABLE_EXAMPLE_FAIL
@@ -428,6 +429,7 @@ $(H2 $(LEGACY_LNAME2 Struct-Constructor, struct-constructor, Struct Constructors
         struct S
         {
             int x, y = 4, z = 6;
+
             this(int a, int b)
             {
                 x = a;
@@ -464,12 +466,13 @@ $(H3 $(LNAME2 delegating-constructor, Delegating Constructors))
         $(I delegating constructor):
         )
 
-        $(SPEC_RUNNABLE_EXAMPLE_FAIL
+        $(SPEC_RUNNABLE_EXAMPLE_RUN
         ---
         struct S
         {
             int j = 1;
             long k = 2;
+
             this(long k)
             {
                 this.k = k;
@@ -477,12 +480,16 @@ $(H3 $(LNAME2 delegating-constructor, Delegating Constructors))
             this(int i)
             {
                 // At this point: j=1, k=2
-                $(CODE_HIGHLIGHT this)(6); // delegating constructor call
+                this(6L); // delegating constructor call
                 // At this point: j=1, k=6
                 j = i;
                 // At this point: j=i, k=6
             }
         }
+
+        S s = S(3);
+        assert(s.j == 3);
+        assert(s.k == 6);
         ---
         )
 
@@ -1551,13 +1558,13 @@ $(GNAME Invariant):
     $(P Struct $(I Invariant)s must hold
     at the entry and exit of all public or exported non-static member functions.
     The order of application of invariants is:
+    )
     $(OL
     $(LI preconditions)
     $(LI invariant)
     $(LI function body)
     $(LI invariant)
     $(LI postconditions)
-    )
     )
 
     $(P The invariant need not hold if the struct instance is implicitly constructed using
