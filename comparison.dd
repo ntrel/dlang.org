@@ -16,9 +16,7 @@ $(ITEMIZE
                 $(A spec/function.html#closures, Closures),
                 $(A spec/function.html#variadic, Typesafe variadic arguments),
                 $(A lazy-evaluation.html, Lazy function argument evaluation),
-                $(A spec/function.html#interpretation, Compile time function evaluation),
-                $(A spec/function.html#pseudo-member, Uniform Function Call Syntax),
-                $(A spec/attribute.html#UserDefinedAttribute, User-Defined Attributes)
+                $(A spec/function.html#interpretation, Compile time function evaluation)
         ),
         Arrays
         $(ITEMIZE
@@ -29,8 +27,7 @@ $(ITEMIZE
                 $(A spec/arrays.html#bounds, Array bounds checking),
                 $(A spec/expression.html#ArrayLiteral, Array literals),
                 $(A spec/arrays.html#associative, Associative arrays),
-                $(A spec/statement.html#SwitchStatement, String switches),
-                $(A spec/declaration.html#alias, Aliases)
+                $(A spec/statement.html#SwitchStatement, String switches)
         ),
         OOP
         $(ITEMIZE
@@ -54,6 +51,12 @@ $(ITEMIZE
                 Independent of VM,
                 Direct native code gen
         ),
+        $(A spec/template.html, Expressibility)
+        $(ITEMIZE
+                $(A spec/statement.html#ForeachStatement, foreach),
+                $(A spec/function.html#pseudo-member, Uniform Function Call Syntax),
+                $(A spec/declaration.html#alias, Aliases)
+        ),
         $(A spec/template.html, Generic Programming)
         $(ITEMIZE
                 Class Templates,
@@ -68,7 +71,7 @@ $(ITEMIZE
                 $(A spec/version.html#staticif, static if),
                 $(A spec/expression.html#IsExpression, expressions),
                 $(A spec/type.html#Typeof, typeof),
-                $(A spec/statement.html#ForeachStatement, foreach),
+                $(A spec/version.html#staticforeach, `static foreach`),
                 $(A spec/declaration.html#AutoDeclaration, Implicit Type Inference)
         ),
         Reliability
@@ -80,7 +83,12 @@ $(ITEMIZE
                 $(A https://wiki.dlang.org/Memory_Management#RAII_.28Resource_Acquisition_Is_Initialization.29, RAII (automatic destructors)),
                 $(A spec/statement.html#TryStatement, Exception handling),
                 $(A spec/statement.html#ScopeGuardStatement, Scope guards),
-                $(A spec/statement.html#TryStatement, try-catch-finally blocks),
+                $(A spec/statement.html#TryStatement, try-catch-finally blocks)
+        ),
+        Concurrency
+        $(ITEMIZE
+                Thread-local storage by default,
+                `shared` type qualifier,
                 $(A spec/statement.html#SynchronizedStatement, Thread synchronization primitives)
         ),
         Compatibility
@@ -98,6 +106,7 @@ $(ITEMIZE
         ),
         Other
         $(ITEMIZE
+                $(A spec/attribute.html#UserDefinedAttribute, User-Defined Attributes),
                 $(A spec/version.html, Conditional compilation),
                 $(A spec/lex.html, Unicode source text),
                 $(A spec/ddoc.html, Documentation comments)
