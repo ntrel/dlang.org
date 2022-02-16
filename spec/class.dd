@@ -313,13 +313,8 @@ $(H2 $(LNAME2 synchronized-classes, Synchronized Classes))
         $(P The $(D synchronized) attribute can only be applied to classes,
         structs cannot be marked to be synchronized.)
 
-$(H2 $(LNAME2 constructors, Constructors))
 
-$(GRAMMAR
-$(GNAME Constructor):
-    $(D this) $(GLINK2 function, Parameters) $(GLINK2 function, MemberFunctionAttributes)$(OPT) $(GLINK2 function, FunctionBody)
-    $(GLINK2 template, ConstructorTemplate)
-)
+$(H2 $(LNAME2 field-init, Field Initializers))
 
         $(P Fields are by default initialized to the
         $(LNAME2 class-default-initializer, default initializer)
@@ -337,10 +332,18 @@ $(GNAME Constructor):
         }
         ------
 
-        $(P The $(I Initializer) is evaluated at compile time.)
-
-        $(P This initialization is done before any constructors are
+        $(P The $(I Initializer) is evaluated at compile time.
+        This initialization is done before any constructors are
         called.)
+
+
+$(H2 $(LNAME2 constructors, Constructors))
+
+$(GRAMMAR
+$(GNAME Constructor):
+    $(D this) $(GLINK2 function, Parameters) $(GLINK2 function, MemberFunctionAttributes)$(OPT) $(GLINK2 function, FunctionBody)
+    $(GLINK2 template, ConstructorTemplate)
+)
 
         $(P Constructors are defined with a function name of $(D this)
         and have no return value:)
@@ -498,7 +501,7 @@ $(H3 $(LNAME2 class-instantiation, Class Instantiation))
         )
     )
 
-$(H3 $(LNAME2 constructor-attributes, Constructor Attributes))
+$(H3 $(LNAME2 constructor-attributes, Constructor Qualifiers))
 
         $(P Constructors can have one of these member function attributes:
         $(D const), $(D immutable), and $(D shared). Construction of qualified
@@ -523,7 +526,7 @@ $(H3 $(LNAME2 constructor-attributes, Constructor Attributes))
         // shared C s = new shared C();
         ------
 
-        $(P Constructors can be overloaded with different attributes.
+        $(P Constructors can be overloaded with different qualifiers.
         )
         ------
         class C
@@ -538,10 +541,11 @@ $(H3 $(LNAME2 constructor-attributes, Constructor Attributes))
         immutable i = new immutable C();
         ------
 
-$(H4 $(LNAME2 pure-constructors, Pure Constructors))
+$(H3 $(LNAME2 pure-constructors, Pure Constructors))
 
-        $(P If the constructor can create a unique object (e.g. if it is `pure`),
-        the object can be implicitly convertible to any qualifiers.
+        $(P If a constructor is $(DDSUBLINK spec/function, pure-functions, `pure`),
+        it creates a unique object. Due to this, a `pure` constructor
+        can be called to construct an object with any qualifiers.
         )
         ------
         class C
