@@ -13,6 +13,9 @@ $(HEADERNAV_TOC)
         as required.
         )
 
+        $(P $(B See also:) $(MREF std,traits),
+        $(DDSUBLINK spec/expression, is-identifier-equal, *IsExpression*).)
+
 $(GRAMMAR
 $(GNAME TraitsExpression):
     $(D __traits) $(D $(LPAREN)) $(GLINK TraitsKeyword) $(D ,) $(GLINK TraitsArguments) $(D $(RPAREN))
@@ -539,6 +542,8 @@ static assert(!__traits(isTemplate,"string"));
 ---
 )
 
+$(P $(B See also:) $(DDSUBLINK spec/expression, is-parameter-list, *IsExpression*).)
+
 $(H2 $(GNAME isCopyable))
 
 $(P Takes one argument. If that argument is a copyable type then $(D true) is returned,
@@ -568,27 +573,32 @@ $(H2 $(GNAME isZeroInit))
 
 $(SPEC_RUNNABLE_EXAMPLE_COMPILE
 ---
+int x = 3;
+static assert(__traits(isZeroInit, typeof(x)));
+
+static assert(__traits(isZeroInit, int[2]));
+
+// For initializing arrays of element type `void`.
+static assert(__traits(isZeroInit, void));
+---
+)
+$(SPEC_RUNNABLE_EXAMPLE_COMPILE
+---
 struct S1 { int x; }
 struct S2 { int x = -1; }
 
 static assert(__traits(isZeroInit, S1));
 static assert(!__traits(isZeroInit, S2));
+---
+)
+$(P `isZeroInit` will always return `true` for a class C because `C.init`
+is a null reference.)
 
-void test()
-{
-    int x = 3;
-    static assert(__traits(isZeroInit, typeof(x)));
-}
-
-// `isZeroInit` will always return true for a class C
-// because `C.init` is null reference.
-
+$(SPEC_RUNNABLE_EXAMPLE_COMPILE
+---
 class C { int x = -1; }
 
 static assert(__traits(isZeroInit, C));
-
-// For initializing arrays of element type `void`.
-static assert(__traits(isZeroInit, void));
 ---
 )
 
@@ -605,6 +615,7 @@ $(H2 $(GNAME isReturnOnStack))
 $(SPEC_RUNNABLE_EXAMPLE_COMPILE
     ---
     struct S { int[20] a; }
+
     int test1();
     S test2();
 
@@ -979,7 +990,10 @@ alias aliasc = fooc;
 
 static assert(__traits(getLinkage, fooc) == "C");
 static assert(__traits(getLinkage, aliasc) == "C");
-
+---
+)
+$(SPEC_RUNNABLE_EXAMPLE_COMPILE
+---
 extern (C++) struct FooCPPStruct {}
 extern (C++) class FooCPPClass {}
 extern (C++) interface FooCPPInterface {}
@@ -1167,6 +1181,7 @@ struct Foo {}
 struct Bar {}
 extern(C++, __traits(getCppNamespaces, Foo)) struct Baz {}
 static assert(__traits(getCppNamespaces, Foo) ==  __traits(getCppNamespaces, Baz));
+
 void main()
 {
     static assert(__traits(getCppNamespaces, Foo)[0] == "ns");
@@ -1305,9 +1320,7 @@ $(H2 $(GNAME getUnitTests))
                 $(DDSUBLINK spec/attribute, uda, UDAs) will be accessible.
         )
 
-        $(H3 Note:)
-
-        $(P
+        $(P $(B Note:)
                 The -unittest flag needs to be passed to the compiler. If the flag
                 is not passed $(CODE __traits(getUnitTests)) will always return an
                 empty sequence.
@@ -1335,11 +1348,6 @@ class Foo
     writeln("foo.unittest");
 }
 
-template Tuple (T...)
-{
-    alias Tuple = T;
-}
-
 shared static this()
 {
   // Override the default unit test runner to do nothing. After that, "main" will
@@ -1351,10 +1359,10 @@ void main()
 {
     writeln("start main");
 
-    alias tests = Tuple!(__traits(getUnitTests, foo));
+    alias tests = __traits(getUnitTests, foo);
     static assert(tests.length == 1);
 
-    alias attributes = Tuple!(__traits(getAttributes, tests[0]));
+    alias attributes = __traits(getAttributes, tests[0]);
     static assert(attributes.length == 1);
 
     foreach (test; tests)
@@ -1547,7 +1555,9 @@ void main()
 )
 
         $(P If the two arguments are expressions made up of literals
-        or enums that evaluate to the same value, true is returned.)
+        or enums that evaluate to the same value, `true` is returned.)
+
+$(H3 $(LNAME2 is-same-lambdas, Lambdas))
 
         $(P If the two arguments are both
         $(DDSUBLINK spec/expression, function_literals, lambda functions) (or aliases
@@ -1572,6 +1582,7 @@ void main()
 $(SPEC_RUNNABLE_EXAMPLE_COMPILE
 ---
 int f() { return 2; }
+
 void test(alias pred)()
 {
     // f() from main is a different function from top-level f()
@@ -1580,11 +1591,23 @@ void test(alias pred)()
 
 void main()
 {
+    int f() { return 3;}
+    test!((int a) => a + f())();
+}
+---
+)
+$(SPEC_RUNNABLE_EXAMPLE_COMPILE
+    ---
     static assert(__traits(isSame, (a, b) => a + b, (c, d) => c + d));
     static assert(__traits(isSame, a => ++a, b => ++b));
     static assert(!__traits(isSame, (int a, int b) => a + b, (a, b) => a + b));
     static assert(__traits(isSame, (a, b) => a + b + 10, (c, d) => c + d + 10));
-
+    ---
+)
+$(SPEC_RUNNABLE_EXAMPLE_COMPILE
+---
+void main()
+{
     // lambdas accessing local variables are considered incomparable
     int b;
     static assert(!__traits(isSame, a => a + b, a => a + b));
@@ -1592,8 +1615,11 @@ void main()
     // lambdas calling other functions are comparable
     int f() { return 3;}
     static assert(__traits(isSame, a => a + f(), a => a + f()));
-    test!((int a) => a + f())();
-
+}
+---
+)
+$(SPEC_RUNNABLE_EXAMPLE_COMPILE
+    ---
     class A
     {
         int a;
@@ -1602,6 +1628,8 @@ void main()
             this.a = a;
         }
     }
+
+    static assert(__traits(isSame, (A a) => ++a.a, (A b) => ++b.a));
 
     class B
     {
@@ -1612,34 +1640,30 @@ void main()
         }
     }
 
-    static assert(__traits(isSame, (A a) => ++a.a, (A b) => ++b.a));
     // lambdas with different data types are considered incomparable,
     // even if the memory layout is the same
     static assert(!__traits(isSame, (A a) => ++a.a, (B a) => ++a.a));
-}
----
+    ---
 )
 
-        $(P If the two arguments are tuples then `isSame` returns `true` if the
-        two tuples, after expansion, have the same length and if each pair
-        of nth argument respects the constraints previously specified.)
+$(H3 $(LNAME2 is-same-sequences, Sequences))
+
+        $(P If the two arguments are sequences then `isSame` returns `true` if the
+        two sequences, after expansion, have the same length and if each
+        nth argument respects the constraints previously specified.)
 
 $(SPEC_RUNNABLE_EXAMPLE_COMPILE
 ---
-import std.stdio;
 import std.meta;
 
 struct S { }
 
-void main()
-{
-    // true, like __traits(isSame(0,0)) && __traits(isSame(1,1))
-    writeln(__traits(isSame, AliasSeq!(0,1), AliasSeq!(0,1)));
-    // false, like __traits(isSame(S,std.meta)) && __traits(isSame(1,1))
-    writeln(__traits(isSame, AliasSeq!(S,1), AliasSeq!(std.meta,1)));
-    // false, the length of the sequences is different
-    writeln(__traits(isSame, AliasSeq!(1), AliasSeq!(1,2)));
-}
+// true, like __traits(isSame(0,0)) && __traits(isSame(1,1))
+static assert(__traits(isSame, AliasSeq!(0,1), AliasSeq!(0,1)));
+// false, like __traits(isSame(S,std.meta)) && __traits(isSame(1,1))
+static assert(!__traits(isSame, AliasSeq!(S,1), AliasSeq!(std.meta,1)));
+// false, the length of the sequences is different
+static assert(!__traits(isSame, AliasSeq!(1), AliasSeq!(1,2)));
 ---
 )
 
@@ -1718,14 +1742,13 @@ $(H2 $(GNAME initSymbol))
 
         $(P Takes a single argument, which must evaluate to a `class`, `struct` or `union` type.
             Returns a `const(void)[]` that holds the initial state of any instance of the supplied type.
-            The slice is constructed for any type `T` as follows:
+            The slice is constructed for any type `T` as follows:)
 
             - `ptr` points to either the initializer symbol of `T`
                or `null` if `T` is a zero-initialized struct / unions.
 
             - `length` is equal to the size of an instance, i.e. `T.sizeof` for structs / unions and
               $(RELATIVE_LINK2 classInstanceSize, $(D __traits(classInstanceSize, T)`)) for classes.
-        )
 
         $(P
             This trait matches the behaviour of `TypeInfo.initializer()` but can also be used when
@@ -1733,7 +1756,7 @@ $(H2 $(GNAME initSymbol))
         )
 
         $(P
-            This traits is not available during $(DDSUBLINK glossary, ctfe, CTFE) because the actual address
+            This trait is not available during $(DDSUBLINK glossary, ctfe, CTFE) because the actual address
             of the initializer symbol will be set by the linker and hence is not available at compile time.
         )
 
