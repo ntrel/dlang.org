@@ -1393,7 +1393,7 @@ switch (name)
         less error prone. char, wchar and dchar strings are allowed.
         )
 
-        $(P $(D Implementation Note:) The compiler's code generator may
+        $(P $(B Implementation Note:) The compiler's code generator may
         assume that the case
         statements are sorted by frequency of use, with the most frequent
         appearing first and the least frequent last. Although this is

@@ -20,7 +20,7 @@ $(GNAME Attribute):
     $(RELATIVE_LINK2 abstract, $(D abstract))
     $(D final)
     $(RELATIVE_LINK2 override, $(D override))
-    $(D synchronized)
+    $(DDSUBLINK spec/class, synchronized-classes, `synchronized`)
     $(RELATIVE_LINK2 auto, $(D auto))
     $(RELATIVE_LINK2 scope, $(D scope))
     $(RELATIVE_LINK2 const, $(D const))
@@ -40,7 +40,7 @@ $(GNAME FunctionAttributeKwd):
 $(GNAME AtAttribute):
     $(D @) $(RELATIVE_LINK2 disable, $(D disable))
     $(D @) $(RELATIVE_LINK2 nogc, $(D nogc))
-    $(D @) $(D live)
+    $(D @) $(DDLINK spec/ob, Live Functions, $(D live))
     $(GLINK Property)
     $(D @) $(RELATIVE_LINK2 safe, $(D safe))
     $(D @) $(RELATIVE_LINK2 safe, $(D system))
@@ -100,17 +100,20 @@ $(GNAME NamespaceList):
 
         $(P D provides an easy way to call C functions and operating
         system API functions, as compatibility with both is essential.
-        The $(I LinkageType) is case sensitive, and is meant to be
-        extensible by the implementation ($(D they are not keywords)).
+        The $(I LinkageType) is case-sensitive, and is meant to be
+        extensible by the implementation ($(B they are not keywords)).
         $(D C) and $(D D) must be supplied, the others are what
         makes sense for the implementation.
-        $(D C++) offers limited compatibility with C++.
-        $(D Objective-C) offers compatibility with Objective-C,
+        )
+        $(UL
+        $(LI $(D C++) offers limited compatibility with C++.)
+        $(LI $(D Objective-C) offers compatibility with Objective-C,
         see the $(LINK2 objc_interface.html, Interfacing to Objective-C)
-        documentation for more information.
-        $(D System) is the same as $(D Windows) on Windows platforms,
-        and $(D C) on other platforms.
-        $(D Implementation Note:)
+        documentation for more information.)
+        $(LI $(D System) is the same as $(D Windows) on Windows platforms,
+        and $(D C) on other platforms.)
+        )
+        $(P $(B Implementation Note:)
         for Win32 platforms, $(D Windows) should exist.
         )
 
@@ -334,8 +337,8 @@ $(GNAME DeprecatedAttribute):
         )
 
         ---------------
-        deprecated("Don't use bar") void oldBar();
-        oldBar();   // Deprecated: function test.oldBar is deprecated - Don't use bar
+        deprecated("Use newBar instead") void oldBar();
+        oldBar();   // Deprecated: function test.oldBar is deprecated - Use newBar instead
         ---------------
 
         $(P Calling CTFE-able functions or using manifest constants is also possible.
@@ -343,16 +346,17 @@ $(GNAME DeprecatedAttribute):
 
         ---------------
         import std.format;
-        enum Message = format("%s and all its members are obsolete", Foobar.stringof);
-        deprecated(Message) class Foobar {}
+        enum message = format("%s and all its members are obsolete", Foobar.stringof);
+        deprecated(message) class Foobar {}
         auto f = new Foobar();   // Deprecated: class test.Foobar is deprecated - Foobar
              // and all its members are obsolete
+
         deprecated(format("%s is also obsolete", "This class")) class BarFoo {}
         auto bf = new BarFoo();  // Deprecated: class test.BarFoo is deprecated - This
              // class is also obsolete
         ---------------
 
-        $(P $(D Implementation Note:) The compiler should have a switch
+        $(P $(B Implementation Note:) The compiler should have a switch
         specifying if $(D deprecated) should be ignored, cause a warning, or cause an error during compilation.
         )
 
@@ -369,8 +373,10 @@ $(GNAME VisibilityAttribute):
     $(D export)
 )
 
-$(P Visibility is an attribute that is one of $(D private), $(D package),
-`protected`, $(D public), or $(D export). They may be referred to as protection
+$(P A visibility attribute is one of $(D private), $(D package),
+`protected`, $(D public), or $(D export).)
+
+$(NOTE They may be referred to as protection
 attributes in documents predating $(LINK2 http://wiki.dlang.org/DIP22, DIP22).)
 
         $(P Symbols with $(D private) visibility can only be accessed from
@@ -495,7 +501,7 @@ $(H2 $(LNAME2 gshared, $(D __gshared) Attribute))
         issues. It is the responsibility of the programmer to ensure that
         access to variables marked $(D __gshared) is synchronized correctly.)
 
-        $(P $(D __gshared) is disallowed in safe mode.)
+        $(P $(D __gshared) is disallowed in `@safe` code.)
 
 $(H2 $(LNAME2 disable, $(D @disable) Attribute))
 
