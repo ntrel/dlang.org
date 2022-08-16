@@ -1171,9 +1171,7 @@ $(H4 $(LNAME2 cast_array, Arrays))
 
             int[] c = [1, 2, 3];
             auto d = cast(byte[])c; // ok
-            // prints:
-            // [1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0]
-            writeln(d);
+            assert(d == [1, 0, 0, 0, 2, 0, 0, 0, 3, 0, 0, 0]);
             ---
         )
 
@@ -1210,9 +1208,8 @@ $(H4 $(LNAME2 cast_floating, Floating Point))
         changes its type, but internally it is retained at full
         precision for the purposes of constant folding.)
 
-        ---
-        void test()
-        {
+        $(SPEC_RUNNABLE_EXAMPLE_RUN
+            ---
             real a = 3.40483L;
             real b;
             b = 3.40483;     // literal is not truncated to double precision
@@ -1220,21 +1217,21 @@ $(H4 $(LNAME2 cast_floating, Floating Point))
             assert(a == 3.40483);
             assert(a == 3.40483L);
             assert(a == 3.40483F);
+
             double d = 3.40483; // truncate literal when assigned to variable
             assert(d != a);     // so it is no longer the same
             const double x = 3.40483; // assignment to const is not
             assert(x == a);     // truncated if the initializer is visible
-        }
-        ---
+            ---
+        )
 
     $(P Casting a floating point value to an integral type is the equivalent
         of converting to an integer using truncation. If the floating point
         value is outside the range of the integral type, the cast will produce
         an invalid result (this is also the case in C, C++).)
 
-        ---
-        void main()
-        {
+        $(SPEC_RUNNABLE_EXAMPLE_RUN
+            ---
             int a = cast(int) 0.8f;
             assert(a == 0);
             long b = cast(long) 1.5;
@@ -1253,8 +1250,8 @@ $(H4 $(LNAME2 cast_floating, Floating Point))
             // 32-bit types, but the most significant bits are ignored
             short f = cast(short) float.max;
             assert(f == 0);
-        }
-        ---
+            ---
+        )
 
 $(H4 $(LNAME2 cast_struct, Structs))
 
@@ -1773,7 +1770,7 @@ $(GNAME ArrayMemberInitialization):
         ---
         )
 
-$(H3 $(LNAME2 cast_array_literal, Casting))
+$(H4 $(LNAME2 cast_array_literal, Casting))
 
     $(P When array literals are cast to another array type, each
         element of the array is cast to the new element type.
@@ -1781,24 +1778,19 @@ $(H3 $(LNAME2 cast_array_literal, Casting))
         reinterpreted as the new type, and the length is recomputed:)
 
         $(SPEC_RUNNABLE_EXAMPLE_RUN
-        ---
-        import std.stdio;
-
-        void main()
-        {
+            ---
             // cast array literal
             const short[] ct = cast(short[]) [cast(byte)1, 1];
             // this is equivalent with:
             // const short[] ct = [cast(short)1, cast(short)1];
-            writeln(ct);  // writes [1, 1]
+            assert(ct == [1, 1]);
 
             // cast other array expression
             // --> normal behavior of CastExpression
             byte[] arr = [cast(byte)1, cast(byte)1];
             short[] rt = cast(short[]) arr;
-            writeln(rt);  // writes [257]
-        }
-        ---
+            assert(rt == [257]);
+            ---
         )
 
         In other words, casting an array literal will change the type of each initializer element.
