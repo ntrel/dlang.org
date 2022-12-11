@@ -111,144 +111,6 @@ $(H3 $(LNAME2 postincrement_postdecrement_operators, Postincrement $(I e)$(D ++)
         $(ARGS $(D $(LPAREN)auto t =) $(I e)$(D , )$(I e)`.opUnary!"++"`$(D , t$(RPAREN))))
         )
 
-$(H3 $(LNAME2 index_unary_operators, Overloading Index Unary Operators))
-
-        $(P Indexing can be $(RELATIVE_LINK2 array, overloaded).
-        A unary operation on an index expression can also be overloaded independently.
-        This works for multidimensional indexing.)
-
-        $(TABLE2 Overloadable Index Unary Operators,
-        $(THEAD $(I op), $(I rewrite))
-        $(TROW
-        $(D -)$(I a)`[`$(ARGUMENTS)`]`,
-        $(ARGS $(I a)`.opIndexUnary!("-")$(LPAREN)`$(ARGUMENTS)`$(RPAREN)`))
-        $(TROW
-        $(D +)$(I a)`[`$(ARGUMENTS)`]`,
-        $(I a)$(D .opIndexUnary!("+")$(LPAREN))$(ARGUMENTS)`$(RPAREN)`
-        )
-        $(TROW
-        `~`$(I a)`[`$(ARGUMENTS)`]`,
-        $(I a)$(D .opIndexUnary!("~")$(LPAREN))$(ARGUMENTS)`$(RPAREN)`
-        )
-        $(TROW
-        `*`$(I a)`[`$(ARGUMENTS)`]`,
-        $(I a)$(D .opIndexUnary!("*")$(LPAREN))$(ARGUMENTS)`$(RPAREN)`
-        )
-        $(TROW
-        `++`$(I a)`[`$(ARGUMENTS)`]`,
-        $(I a)`.opIndexUnary!("++")$(LPAREN)`$(ARGUMENTS)`$(RPAREN)`
-        )
-        $(TROW
-        `--`$(I a)`[`$(ARGUMENTS)`]`,
-        $(I a)`.opIndexUnary!("--")$(LPAREN)`$(ARGUMENTS)`$(RPAREN)`
-        )
-        )
-
-$(SPEC_RUNNABLE_EXAMPLE_RUN
----
-struct S
-{
-    private int[] a;
-
-    void opIndexUnary(string s: "++")(size_t i) { ++a[i]; }
-}
-
-S s = {[4]};
-++s[0];
-assert(s.a[0] == 5);
----
-)
-
-$(H3 $(LNAME2 slice_unary_operators, Overloading Slice Unary Operators))
-
-        $(P Slicing can be $(RELATIVE_LINK2 slice, overloaded).
-        A unary operation on a slice can also be overloaded independently.
-        `opIndexUnary` is defined either with no function arguments for a full slice,
-        or with two arguments for the start and end indices of the slice.)
-
-        $(TABLE2 Overloadable Slice Unary Operators,
-        $(THEAD $(I op), $(I rewrite))
-        $(TROW
-        $(D -)$(I a)$(D [)$(SLICE)$(D ]),
-        $(I a)$(D .opIndexUnary!("-")$(LPAREN))$(I a)$(D .opSlice$(LPAREN))$(SLICE2)$(D $(RPAREN)$(RPAREN))
-        )
-
-        $(TROW
-        $(D +)$(I a)$(D [)$(SLICE)$(D ]),
-        $(I a)$(D .opIndexUnary!("+")$(LPAREN))$(I a)$(D .opSlice$(LPAREN))$(SLICE2)$(D $(RPAREN)$(RPAREN))
-        )
-
-        $(TROW
-        $(D ~)$(I a)$(D [)$(SLICE)$(D ]),
-        $(I a)$(D .opIndexUnary!("~")$(LPAREN))$(I a)$(D .opSlice$(LPAREN))$(SLICE2)$(D $(RPAREN)$(RPAREN))
-        )
-
-        $(TROW
-        $(D *)$(I a)$(D [)$(SLICE)$(D ]),
-        $(I a)$(D .opIndexUnary!("*")$(LPAREN))$(I a)$(D .opSlice$(LPAREN))$(SLICE2)$(D $(RPAREN)$(RPAREN))
-        )
-
-        $(TROW
-        $(D ++)$(I a)$(D [)$(SLICE)$(D ]),
-        $(I a)$(D .opIndexUnary!("++")$(LPAREN))$(I a)$(D .opSlice$(LPAREN))$(SLICE2)$(D $(RPAREN)$(RPAREN))
-        )
-
-        $(TROW
-        $(D --)$(I a)$(D [)$(SLICE)$(D ]),
-        $(I a)$(D .opIndexUnary!("--")$(LPAREN))$(I a)$(D .opSlice$(LPAREN))$(SLICE2)$(D $(RPAREN)$(RPAREN))
-        )
-
-        $(TROW
-        $(D -)$(I a)$(D [ ]),
-        $(I a)$(D .opIndexUnary!("-")())
-        )
-
-        $(TROW
-        $(D +)$(I a)$(D [ ]),
-        $(I a)$(D .opIndexUnary!("+")())
-        )
-
-        $(TROW
-        $(D ~)$(I a)$(D [ ]),
-        $(I a)$(D .opIndexUnary!("~")())
-        )
-
-        $(TROW
-        $(D *)$(I a)$(D [ ]),
-        $(I a)$(D .opIndexUnary!("*")())
-        )
-
-        $(TROW
-        $(D ++)$(I a)$(D [ ]),
-        $(I a)$(D .opIndexUnary!("++")())
-        )
-
-        $(TROW
-        $(D --)$(I a)$(D [ ]),
-        $(I a)$(D .opIndexUnary!("--")())
-        )
-        )
-
-$(SPEC_RUNNABLE_EXAMPLE_RUN
----
-struct S
-{
-    private int[] a;
-
-    void opIndexUnary(string s: "--")() { --a[]; }
-}
-
-S s = {[1, 2]};
---s[];
-assert(s.a == [0, 1]);
----
-)
-
-        $(NOTE For backward compatibility, if the above rewrites fail to compile and
-        $(D opSliceUnary) is defined, then the rewrites
-        $(D a.opSliceUnary!(op)(i, j)) and
-        $(D a.opSliceUnary!(op)) are tried instead, respectively.)
-
 $(H2 $(LEGACY_LNAME2 Cast, cast, Cast Operator Overloading))
 
     $(P To define how one type can be cast to another, define the
@@ -907,6 +769,54 @@ void test()
         $(D opIndexOpAssign), those are preferred over $(D opIndex).
         )
 
+$(H3 $(LNAME2 index_unary_operators, Overloading Index Unary Operators))
+
+        $(P Indexing can be $(RELATIVE_LINK2 array, overloaded).
+        A unary operation on an index expression can also be overloaded independently.
+        This works for multidimensional indexing.)
+
+        $(TABLE2 Overloadable Index Unary Operators,
+        $(THEAD $(I op), $(I rewrite))
+        $(TROW
+        $(D -)$(I a)`[`$(ARGUMENTS)`]`,
+        $(ARGS $(I a)`.opIndexUnary!("-")$(LPAREN)`$(ARGUMENTS)`$(RPAREN)`))
+        $(TROW
+        $(D +)$(I a)`[`$(ARGUMENTS)`]`,
+        $(I a)$(D .opIndexUnary!("+")$(LPAREN))$(ARGUMENTS)`$(RPAREN)`
+        )
+        $(TROW
+        `~`$(I a)`[`$(ARGUMENTS)`]`,
+        $(I a)$(D .opIndexUnary!("~")$(LPAREN))$(ARGUMENTS)`$(RPAREN)`
+        )
+        $(TROW
+        `*`$(I a)`[`$(ARGUMENTS)`]`,
+        $(I a)$(D .opIndexUnary!("*")$(LPAREN))$(ARGUMENTS)`$(RPAREN)`
+        )
+        $(TROW
+        `++`$(I a)`[`$(ARGUMENTS)`]`,
+        $(I a)`.opIndexUnary!("++")$(LPAREN)`$(ARGUMENTS)`$(RPAREN)`
+        )
+        $(TROW
+        `--`$(I a)`[`$(ARGUMENTS)`]`,
+        $(I a)`.opIndexUnary!("--")$(LPAREN)`$(ARGUMENTS)`$(RPAREN)`
+        )
+        )
+
+$(SPEC_RUNNABLE_EXAMPLE_RUN
+---
+struct S
+{
+    private int[] a;
+
+    void opIndexUnary(string s: "++")(size_t i) { ++a[i]; }
+}
+
+S s = {[4]};
+++s[0];
+assert(s.a[0] == 5);
+---
+)
+
 $(H3 $(LEGACY_LNAME2 Slice, slice, Slice Operator Overloading))
 
         $(P Overloading the slicing operator means overloading expressions
@@ -1012,6 +922,96 @@ __tmp.opIndexAssign(c, 1, __tmp.opSlice!1(2,3), __tmp.opDollar!2 - 1);
         from when D did not have full support for multidimensional arrays. This
         usage of $(D opSlice) is discouraged.
         )
+
+$(H3 $(LNAME2 slice_unary_operators, Overloading Slice Unary Operators))
+
+        $(P Slicing can be $(RELATIVE_LINK2 slice, overloaded).
+        A unary operation on a slice can also be overloaded independently.
+        `opIndexUnary` is defined either with no function arguments for a full slice,
+        or with two arguments for the start and end indices of the slice.)
+
+        $(TABLE2 Overloadable Slice Unary Operators,
+        $(THEAD $(I op), $(I rewrite))
+        $(TROW
+        $(D -)$(I a)$(D [)$(SLICE)$(D ]),
+        $(I a)$(D .opIndexUnary!("-")$(LPAREN))$(I a)$(D .opSlice$(LPAREN))$(SLICE2)$(D $(RPAREN)$(RPAREN))
+        )
+
+        $(TROW
+        $(D +)$(I a)$(D [)$(SLICE)$(D ]),
+        $(I a)$(D .opIndexUnary!("+")$(LPAREN))$(I a)$(D .opSlice$(LPAREN))$(SLICE2)$(D $(RPAREN)$(RPAREN))
+        )
+
+        $(TROW
+        $(D ~)$(I a)$(D [)$(SLICE)$(D ]),
+        $(I a)$(D .opIndexUnary!("~")$(LPAREN))$(I a)$(D .opSlice$(LPAREN))$(SLICE2)$(D $(RPAREN)$(RPAREN))
+        )
+
+        $(TROW
+        $(D *)$(I a)$(D [)$(SLICE)$(D ]),
+        $(I a)$(D .opIndexUnary!("*")$(LPAREN))$(I a)$(D .opSlice$(LPAREN))$(SLICE2)$(D $(RPAREN)$(RPAREN))
+        )
+
+        $(TROW
+        $(D ++)$(I a)$(D [)$(SLICE)$(D ]),
+        $(I a)$(D .opIndexUnary!("++")$(LPAREN))$(I a)$(D .opSlice$(LPAREN))$(SLICE2)$(D $(RPAREN)$(RPAREN))
+        )
+
+        $(TROW
+        $(D --)$(I a)$(D [)$(SLICE)$(D ]),
+        $(I a)$(D .opIndexUnary!("--")$(LPAREN))$(I a)$(D .opSlice$(LPAREN))$(SLICE2)$(D $(RPAREN)$(RPAREN))
+        )
+
+        $(TROW
+        $(D -)$(I a)$(D [ ]),
+        $(I a)$(D .opIndexUnary!("-")())
+        )
+
+        $(TROW
+        $(D +)$(I a)$(D [ ]),
+        $(I a)$(D .opIndexUnary!("+")())
+        )
+
+        $(TROW
+        $(D ~)$(I a)$(D [ ]),
+        $(I a)$(D .opIndexUnary!("~")())
+        )
+
+        $(TROW
+        $(D *)$(I a)$(D [ ]),
+        $(I a)$(D .opIndexUnary!("*")())
+        )
+
+        $(TROW
+        $(D ++)$(I a)$(D [ ]),
+        $(I a)$(D .opIndexUnary!("++")())
+        )
+
+        $(TROW
+        $(D --)$(I a)$(D [ ]),
+        $(I a)$(D .opIndexUnary!("--")())
+        )
+        )
+
+$(SPEC_RUNNABLE_EXAMPLE_RUN
+---
+struct S
+{
+    private int[] a;
+
+    void opIndexUnary(string s: "--")() { --a[]; }
+}
+
+S s = {[1, 2]};
+--s[];
+assert(s.a == [0, 1]);
+---
+)
+
+        $(NOTE For backward compatibility, if the above rewrites fail to compile and
+        $(D opSliceUnary) is defined, then the rewrites
+        $(D a.opSliceUnary!(op)(i, j)) and
+        $(D a.opSliceUnary!(op)) are tried instead, respectively.)
 
 $(H3 $(LEGACY_LNAME2 Dollar, dollar, Dollar Operator Overloading))
 
