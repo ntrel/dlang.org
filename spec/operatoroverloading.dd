@@ -771,8 +771,7 @@ void test()
 
 $(H3 $(LNAME2 index_unary_operators, Overloading Index Unary Operators))
 
-        $(P Indexing can be $(RELATIVE_LINK2 array, overloaded).
-        A unary operation on an index expression can also be overloaded independently.
+        $(P A unary operation on an index expression can also be overloaded independently.
         This works for multidimensional indexing.)
 
         $(TABLE2 Overloadable Index Unary Operators,
@@ -925,8 +924,7 @@ __tmp.opIndexAssign(c, 1, __tmp.opSlice!1(2,3), __tmp.opDollar!2 - 1);
 
 $(H3 $(LNAME2 slice_unary_operators, Overloading Slice Unary Operators))
 
-        $(P Slicing can be $(RELATIVE_LINK2 slice, overloaded).
-        A unary operation on a slice can also be overloaded independently.
+        $(P A unary operation on a slice can also be overloaded independently.
         `opIndexUnary` is defined either with no function arguments for a full slice,
         or with two arguments for the start and end indices of the slice.)
 
