@@ -292,11 +292,12 @@ a pointer.
 )
 
 ---
-@live void uhoh()
+@live void leak()
 {
     scope p = malloc();  // p is considered an Owner
     scope const pc = malloc(); // pc is not considered an Owner
-} // dangling pointer pc is not detected on exit
+    // error, p is not disposed of
+} // undisposed pointer pc is not detected on exit
 
 ---
 
