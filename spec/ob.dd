@@ -135,7 +135,15 @@ $(DL
 $(DT Undefined)
 
 $(DD The pointer is in an invalid state. Dereferencing such a pointer is
-an error.)
+an error.
+---
+@live void e()
+{
+    int* p = void;
+    //writeln(*p); // error
+}
+---
+)
 
 $(DT Owner)
 
