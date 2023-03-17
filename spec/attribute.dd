@@ -183,14 +183,16 @@ $(H3 C++ $(LNAME2 namespace, Namespaces))
 
         $(P Namespaces create a new named scope that is imported into its enclosing scope.)
 
+        $(SPEC_RUNNABLE_EXAMPLE_COMPILE
         ---
         extern (C++, N) { void foo(); void bar(); }
         extern (C++, M) { void foo(); }
 
         bar();   // ok
-        foo();   // error - N.foo() or M.foo() ?
+        //foo(); // error - N.foo() or M.foo() ?
         M.foo(); // ok
         ---
+        )
 
         $(P Multiple identifiers in the $(I QualifiedIdentifier) create nested namespaces:)
 
@@ -373,6 +375,7 @@ $(GNAME DeprecatedAttribute):
         $(P Calling CTFE-able functions or using manifest constants is also possible.
         )
 
+        $(SPEC_RUNNABLE_EXAMPLE_COMPILE
         ---------------
         import std.format;
         enum Message = format("%s and all its members are obsolete", Foobar.stringof);
@@ -383,6 +386,7 @@ $(GNAME DeprecatedAttribute):
         auto bf = new BarFoo();  // Deprecated: class test.BarFoo is deprecated - This
              // class is also obsolete
         ---------------
+        )
 
         $(P $(D Implementation Note:) The compiler should have a switch
         specifying if $(D deprecated) should be ignored, cause a warning, or cause an error during compilation.
@@ -461,7 +465,9 @@ $(H3 $(LNAME2 export, $(D export) Attribute))
         a DLL or executable is importing a symbol from a DLL.)
 
 
-$(H2 $(LNAME2 const, $(D const) Attribute))
+$(H2 $(LNAME2 mutability, Mutability Attributes))
+
+$(H3 $(LNAME2 const, $(D const) Attribute))
 
         $(P The $(D const) attribute changes the type of the declared symbol from $(D T) to $(D const(T)),
         where $(D T) is the type specified (or inferred) for the introduced symbol in the absence of $(D const).
@@ -492,7 +498,7 @@ $(H2 $(LNAME2 const, $(D const) Attribute))
         ---------------
         )
 
-$(H2 $(LNAME2 immutable, $(D immutable) Attribute))
+$(H3 $(LNAME2 immutable, $(D immutable) Attribute))
 
         $(P The $(D immutable) attribute modifies the type from $(D T) to $(D immutable(T)),
         the same way as $(D const) does. See:
@@ -500,19 +506,21 @@ $(H2 $(LNAME2 immutable, $(D immutable) Attribute))
         * $(DDSUBLINK spec/const3, immutable_storage_class, `immutable` storage class)
         * $(DDSUBLINK spec/const3, immutable_type, $(D immutable) type qualifier)
 
-$(H2 $(LNAME2 inout, $(D inout) Attribute))
+$(H3 $(LNAME2 inout, $(D inout) Attribute))
 
         $(P The $(DDSUBLINK spec/const3, inout, $(D inout) attribute) modifies the type from $(D T) to $(D inout(T)),
         the same way as $(D const) does.
         )
 
-$(H2 $(LNAME2 shared, $(D shared) Attribute))
+$(H2 $(LNAME2 shared-storage, Shared Storage Attributes))
+
+$(H3 $(LNAME2 shared, $(D shared) Attribute))
 
         $(P The $(DDSUBLINK spec/const3, shared, $(D shared) attribute) modifies the type from $(D T) to $(D shared(T)),
         the same way as $(D const) does.
         )
 
-$(H2 $(LNAME2 gshared, $(D __gshared) Attribute))
+$(H3 $(LNAME2 gshared, $(D __gshared) Attribute))
 
         $(P By default, non-immutable global declarations reside in thread local
         storage. When a global variable is marked with the $(D __gshared)
