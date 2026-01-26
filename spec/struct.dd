@@ -252,21 +252,25 @@ $(H2 $(LNAME2 bitfields, Bit Field Declarations))
     Bit fields must be non-static.
     )
 
+    $(SPEC_RUNNABLE_EXAMPLE_COMPILE
     ---
     struct B
     {
-        int x:3, y:2;
+        uint x : 3 = 4;
+        uint y : 2;
     }
 
-    static assert(B.sizeof == 4);
+    static assert(B.sizeof == 4); // 5 bits fit into a single uint
 
-    int vaporator(B b)
+    uint vaporator()
     {
-        b.x = 4;
-        b.y = 2;
-        return b.x + b.y; // returns 6
+        B b = { y:2 };
+        return b.x + b.y;
     }
+
+    static assert(vaporator() == 6);
     ---
+    )
 
     $(IMPLEMENTATION_DEFINED Reading and writing a bit field may cause reads and writes of other bit
     fields in the same unit. Any use of bit fields where asynchronous access is possible will produce
